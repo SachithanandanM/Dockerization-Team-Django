@@ -43,7 +43,7 @@ services:
   categories:
     build:
       context: .
-      dockerfile: Dockerfile.categories
+      dockerfile: Dockerfile.category
     container_name: categories_service
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
@@ -56,7 +56,7 @@ services:
   search:
     build:
       context: .
-      dockerfile: Dockerfile.search
+      dockerfile: Dockerfile.Search
     container_name: search_service
     command: python manage.py runserver 0.0.0.0:8000
     volumes:

@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header Section -->
+    <div class="text-center mb-5 pb-3 border-bottom border-primary border-3">
+        {% if category %}
+            <div>
+                <h1 class="display-4 fw-bold text-primary mb-3">{{ category.name }} Products</h1>
+                <p class="lead text-muted mb-0">{{ category.description }}</p>
+            </div>
+        {% elif query %}
+            <div>
+                <h1 class="display-4 fw-bold text-primary mb-3">Search Results</h1>
+                <p class="lead text-muted">Found results for <span class="text-primary fw-semibold">"{{ query }}"</span></p>
+            </div>
+        {% else %}
+            <div>
+                <h1 class="display-4 fw-bold text-primary mb-3">All Products</h1>
+                <p class="lead text-muted">Discover our complete collection</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Products Grid -->
+    <div>
+        {% if products %}
+            <div class="row g-4">
+                {% for product in products %}
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="card h-100 shadow-sm border-0 rounded-3">
+                        <div class="position-relative bg-light rounded-top overflow-hidden">
+                            <a href="{% url 'product_detail' product.id %}" class="text-decoration-none">
+                                {% if product.image_url %}
+                                    <img src="{{ product.image_url }}" 
+                                         class="card-img-top p-3" 
+                                         alt="{{ product.name }}"
+                                         loading="lazy"
+                                         style="height: 220px; object-fit: contain;">
+                                {% else %}
+                                    <div class="d-flex align-items-center justify-content-center bg-secondary text-white" style="height: 220px;">
+                                        <i class="bi bi-image fs-1"></i>
+                                    </div>
+                                {% endif %}
+                            </a>
+                            <!-- Stock Badge -->
+                            <div class="position-absolute top-0 end-0 m-2">
+                                {% if product.quantity > 0 %}
+                                    <span class="badge bg-success rounded-pill px-3 py-2">
+                                        <i class="bi bi-check-circle-fill me-1"></i>In Stock
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger rounded-pill px-3 py-2">
+                                        <i class="bi bi-x-circle-fill me-1"></i>Out of Stock
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h5 class="card-title flex-grow-1 mb-3">
+                                <a href="{% url 'product_detail' product.id %}" class="text-decoration-none text-dark fw-semibold">
+                                    {{ product.name|truncatechars:30 }}
+                                </a>
+                            </h5>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <span class="h5 text-primary fw-bold mb-0">Rs.{{ product.price }}</span>
+                                <a href="{% url 'product_detail' product.id %}" class="btn btn-primary btn-sm rounded-pill px-3">
+                                    <span class="me-1">View Details</span>
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="d-flex justify-content-center align-items-center bg-light rounded-3 border border-2 border-dashed" style="min-height: 400px;">
+                <div class="text-center p-4">
+                    <i class="bi bi-search display-1 text-muted mb-3"></i>
+                    <h3 class="text-muted mb-2">No products found</h3>
+                    <p class="text-muted">Try adjusting your search or browse different categories</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Pagination -->
+    {% if products.paginator.num_pages > 1 %}
+    <div class="d-flex justify-content-center mt-5 pt-4">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {% if products.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}page=1" aria-label="First">
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}page={{ products.previous_page_number }}" aria-label="Previous">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in products.paginator.page_range %}
+                    {% if products.number == num %}
+                        <li class="page-item active">
+                            <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if products.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}page={{ products.next_page_number }}" aria-label="Next">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}page={{ products.paginator.num_pages }}" aria-label="Last">
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+{% endif %}
+
+</div>
+{% endblock %}

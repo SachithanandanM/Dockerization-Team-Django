@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card mt-5">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Sign In</h2>
+                    
+                    {% if form.errors %}
+                        <div class="alert alert-danger mb-3">
+                            Invalid email or password. Please try again.
+                        </div>
+                    {% endif %}
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Email</label>
+                            <input type="email" name="username" class="form-control" id="id_username" required autofocus>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label">Password</label>
+                            <div class="input-group">
+                            <input type="password" name="password" class="form-control" id="id_password" required>
+                            <button class="btn btn-secondary" type="button" id="togglePassword">Show</button>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 ">
+                            <button type="submit" class="btn btn-primary">Sign In</button>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            Not an user? <a href="{% url 'signup' %}">Sign Up</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    const togglePassword = document.querySelector("#togglePassword");
+    const password = document.querySelector("#id_password");
+
+    togglePassword.addEventListener("click", function () {
+        // toggle the type attribute
+        const type = password.getAttribute("type") === "password" ? "text" : "password";
+        password.setAttribute("type", type);
+
+        // toggle the eye icon text
+        this.textContent = type === "password" ? "Show" : "Hide";
+    });
+
+
+document.querySelector("form").addEventListener("submit", async function(event) {
+    // let Django handle normal login flow too
+    // but also request JWT and save it
+    const email = document.getElementById("id_username").value;
+    const password = document.getElementById("id_password").value;
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/api/token/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: email, password: password })
+        });
+
+        const data = await response.json();
+
+        if (data.access) {
+            localStorage.setItem("access", data.access);
+            localStorage.setItem("refresh", data.refresh);
+            console.log("JWT stored in localStorage.");
+        }
+    } catch (err) {
+        console.error("JWT fetch failed", err);
+    }
+});
+</script>
+{% endblock %}

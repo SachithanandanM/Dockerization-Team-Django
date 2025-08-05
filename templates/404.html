@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <h1 class="display-4 text-danger">
+        <i class="bi bi-exclamation-triangle-fill"></i> 404 - Not Found
+    </h1>
+    <p class="lead">Sorry, the page or product you're looking for doesn't exist.</p>
+    <a href="{% url 'categories' %}" class="btn btn-primary btn-lg">
+        Go to Categories
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <!-- Page Header with Breadcrumb -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="display-5 fw-bold mb-2">Shop Categories</h1>
+            <p class="text-muted fs-5">Discover our wide range of product categories</p>
+        </div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-light rounded px-3 py-2">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item active fw-medium" aria-current="page">Categories</li>
+            </ol>
+        </nav>
+    </div>
+    
+    <!-- Categories Grid -->
+    <div class="row g-4">
+        {% for category in categories %}
+        <div class="col-xl-4 col-lg-6 col-md-6">
+            <div class="card h-100 border shadow-sm">
+                <a href="{% url 'products' category.id %}" class="text-decoration-none text-dark">
+                    <div class="position-relative overflow-hidden" style="height: 250px;">
+                        {% if category.image_url %}
+                        <img src="{{ category.image_url }}" 
+                             class="img-fluid w-100 h-100 object-fit-cover"
+                             alt="{{ category.name }}"
+                             loading="lazy">
+                        {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center h-100">
+                            <div class="text-center">
+                                <i class="bi bi-grid text-primary fs-1 mb-2"></i>
+                                <p class="text-muted mb-0 fw-medium">{{ category.name }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-body p-4">
+                        <h3 class="h4 card-title mb-3 text-dark fw-bold">{{ category.name }}</h3>
+                        <p class="card-text text-muted mb-4">{{ category.description|truncatewords:25 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary text-white px-3 py-2 rounded-pill">
+                                <i class="bi bi-box me-1"></i>
+                                {{ category.products.count }} items
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center py-5 border rounded">
+                <i class="bi bi-info-circle-fill me-2 fs-4"></i>
+                <h4 class="mb-2">No Categories Available</h4>
+                <p class="mb-0 text-muted">Categories will be displayed here once they are added.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb bg-light rounded px-3 py-2">
+        <li class="breadcrumb-item"><a href="{% url 'categories' %}" class="text-decoration-none">Categories</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'products' product.category.id %}" class="text-decoration-none">{{ product.category.name }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+    </ol>
+</nav>
+
+<!-- Main Product Section -->
+<div class="container mt-3">
+    <div class="row g-5">
+        <!-- Product Images Column -->
+        <div class="col-lg-6">
+            <div class="bg-white border rounded p-3 shadow-sm">
+                {% if product.image_url %}
+                    <div class="text-center p-4 bg-light rounded">
+                        <img src="{{ product.image_url }}" 
+                             class="img-fluid rounded" 
+                             alt="{{ product.name }}"
+                             id="mainProductImage"
+                             style="max-height: 400px; object-fit: contain;">
+                    </div>
+                {% else %}
+                    <div class="text-center p-5 bg-light rounded">
+                        <i class="bi bi-image fs-1 text-muted"></i>
+                        <p class="mt-2 text-muted">No image available</p>
+                    </div>
+                {% endif %}
+                
+                <!-- Thumbnail Gallery -->
+                <div class="d-flex gap-2 mt-3 justify-content-center">
+                    {% for i in "123" %}
+                    <div class="border rounded p-1" style="width: 80px; height: 80px; cursor: pointer;">
+                        <img src="{{ product.image_url|default:'#' }}" 
+                             class="img-thumbnail w-100 h-100"
+                             style="object-fit: contain;"
+                             onmouseover="document.getElementById('mainProductImage').src=this.src">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product Info Column -->
+        <div class="col-lg-6">
+            <div class="p-2">
+                <div class="mb-4">
+                    <h1 class="fw-bold text-dark mb-3" style="font-size: 2.25rem;">{{ product.name }}</h1>
+                    <a href="{% url 'products' product.category.id %}" class="text-decoration-none">
+                        <span class="badge bg-info text-dark px-3 py-2 rounded-pill">{{ product.category.name }}</span>
+                    </a>
+                </div>
+                
+                <!-- Price Section -->
+                <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+                    <h2 class="text-primary fw-bold mb-0" style="font-size: 2.5rem;">Rs.{{ product.price }}</h2>
+                    {% if product.price < 50 %}
+                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">
+                            <i class="bi bi-star-fill"></i> Great Value
+                        </span>
+                    {% endif %}
+                </div>
+                
+                <!-- Stock Status -->
+                <div class="mb-4">
+                    <span class="badge fs-6 px-4 py-3 rounded-pill {% if product.quantity > 0 %}bg-success{% else %}bg-danger{% endif %}">
+                        {% if product.quantity > 0 %}
+                            <i class="bi bi-check-circle-fill"></i> In Stock ({{ product.quantity }} available)
+                        {% else %}
+                            <i class="bi bi-x-circle-fill"></i> Out of Stock
+                        {% endif %}
+                    </span>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="d-flex gap-3 mb-4 flex-wrap">
+                    <button class="btn btn-primary btn-lg px-4 py-3 flex-grow-1">
+                        <i class="bi bi-cart-plus"></i> Add to Cart
+                    </button>
+                    <button class="btn btn-outline-secondary btn-lg px-4 py-3">
+                        <i class="bi bi-heart"></i> Wishlist
+                    </button>
+                </div>
+                
+                <!-- Product Highlights -->
+                <div class="bg-light rounded p-4">
+                    <h4 class="text-dark fw-bold mb-3">
+                        <i class="bi bi-stars"></i> Product Highlights
+                    </h4>
+                    <ul class="list-unstyled mb-0">
+                        <li class="d-flex align-items-center gap-2 py-2 border-bottom border-light">
+                            <i class="bi bi-check-circle-fill text-success"></i> 
+                            <span class="text-dark fw-medium">Premium quality materials</span>
+                        </li>
+                        <li class="d-flex align-items-center gap-2 py-2 border-bottom border-light">
+                            <i class="bi bi-check-circle-fill text-success"></i> 
+                            <span class="text-dark fw-medium">Free shipping on orders over $50</span>
+                        </li>
+                        <li class="d-flex align-items-center gap-2 py-2">
+                            <i class="bi bi-check-circle-fill text-success"></i> 
+                            <span class="text-dark fw-medium">30-day return policy</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Description Section -->
+        <div class="col-12 mt-5">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0 fw-bold"><i class="bi bi-card-text"></i> Product Description</h3>
+                </div>
+                <div class="card-body p-4">
+                    <p class="card-text text-dark fs-5 lh-lg mb-0">{{ product.description }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Related Products -->
+        <div class="col-12 mt-5">
+            <div class="mb-5">
+                <h3 class="text-dark fw-bold mb-4 pb-2 border-bottom border-primary border-3">
+                    <i class="bi bi-box-seam"></i> You May Also Like
+                </h3>
+                <div class="row row-cols-2 row-cols-md-4 g-4">
+                    {% for related in product.category.products.all|slice:":4" %}
+                        {% if related.id != product.id %}
+                        <div class="col">
+                            <div class="card h-100 shadow-sm border-0">
+                                <div class="bg-light" style="height: 200px;">
+                                    <a href="{% url 'product_detail' related.id %}" class="text-decoration-none">
+                                        <img src="{{ related.image_url }}" 
+                                             class="w-100 h-100 p-3" 
+                                             alt="{{ related.name }}"
+                                             style="object-fit: contain;">
+                                    </a>
+                                </div>
+                                <div class="card-body p-3">
+                                    <h5 class="card-title">
+                                        <a href="{% url 'product_detail' related.id %}" 
+                                           class="text-decoration-none text-dark fw-semibold">
+                                            {{ related.name }}
+                                        </a>
+                                    </h5>
+                                    <p class="card-text text-primary fw-bold fs-5 mb-0">${{ related.price }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+1. base-setup (Core Django Setup)
+
+manage.py
+requirements.txt
+ecommerce/
+    __init__.py
+    settings.py
+    urls.py
+    asgi.py
+    wsgi.py
+
+
+2. users (Authentication System)
+
+users/
+    __init__.py
+    admin.py
+    apps.py
+    forms.py
+    models.py
+    urls.py
+    views.py
+    tests.py
+    migrations/
+
+
+3. products (Product Management)
+
+products/
+    __init__.py
+    admin.py
+    apps.py
+    models.py
+    views.py
+    urls.py
+    tests.py
+    migrations/
+
+4. categories (Product Categorization)
+
+products/
+    models.py   (only category-related parts)
+    views.py    (category listing/filter)
+    urls.py     (category URLs)
+
+5. search (Indexing & Signals)
+
+products/
+    documents.py
+    signals.py
+
+6. frontend-templates (All Templates in One Place)
+
+templates/
+    base.html
+    404.html
+    home.html
+    signin.html
+    signup.html
+    products.html
+    product_detail.html
+    categories.html
+
+
+7. final-compose (DevOps & Deployment)
+
+docker-compose.yml       (to be created)
+deployment/              (optional configs, env files)
